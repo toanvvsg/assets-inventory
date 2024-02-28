@@ -3,7 +3,6 @@ package ecr_report
 import (
 	"context"
 	"fmt"
-	// "sync"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
@@ -14,10 +13,10 @@ type Repository struct {
 	Tags map[string]string
 }
 
-func GetECRReposWithTags(ctx context.Context) ([]Repository, error) {
+func GetRepos(ctx context.Context) ([]Repository, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
-		fmt.Println("Error creating session,", err)
+		fmt.Errorf("Error creating session, %w", err)
 		return nil, err
 	}
 
@@ -27,7 +26,7 @@ func GetECRReposWithTags(ctx context.Context) ([]Repository, error) {
 
 	resp, err := client.DescribeRepositories(context.TODO(), input)
 	if err != nil {
-		fmt.Println("Error describing repositories,", err)
+		fmt.Errorf("Error describing repositories with error: %w",  err)
 		return nil, err
 	}
 

@@ -16,7 +16,7 @@ type S3Bucket struct {
 }
 
 // getS3BucketsWithTags function using AWS SDK v2
-func GetBucketsWithTags(ctx context.Context) ([]S3Bucket, error) {
+func GetBuckets(ctx context.Context) ([]S3Bucket, error) {
 	// Load default AWS configuration
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
@@ -38,7 +38,7 @@ func GetBucketsWithTags(ctx context.Context) ([]S3Bucket, error) {
 		bucketObj := S3Bucket{Name: *bucket.Name}
 		bucketObj.Tags, err = getTags(ctx, svc, *bucket.Name)
 		if err != nil {
-			fmt.Printf("error getting tags for bucket %s: %w\n", bucket.Name, err)
+			fmt.Errorf("error getting tags for bucket %s: %w\n", bucket.Name, err)
 			continue
 		}
 		bucketsWithTags = append(bucketsWithTags, bucketObj)
