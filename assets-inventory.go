@@ -20,5 +20,11 @@ func main() {
     fmt.Println(ecrs)
   }
   ec2s, _ := ec2_report.GetInstances(ctx)
-  fmt.Println(ec2s)
+  for _, ec2 := range ec2s {
+    fmt.Println(ec2.Name)
+    fmt.Println(" - ", ec2.State)
+    if ec2.StateTransitionReason != "" {
+      fmt.Println(" - ", ec2.StateTransitionReason)
+    }
+  }
 }

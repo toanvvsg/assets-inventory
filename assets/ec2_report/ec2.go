@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"time"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -15,6 +14,7 @@ type EC2 struct {
 	Tags map[string]string
 	State string
 	LaunchTime time.Time
+	StateTransitionReason string
 }
 
 func GetInstances(ctx context.Context) ([]EC2, error) {
@@ -35,22 +35,19 @@ func GetInstances(ctx context.Context) ([]EC2, error) {
   var ec2s []EC2
 	for _, reservation := range resp.Reservations {
 	  for _, instance := range reservation.Instances {
-	    state := *instance.State
 	    ec2 := EC2{
 	      Name: *instance.InstanceId,
-	      State: state.Name,
+	      State: string(instance.State.Name),
 	      LaunchTime: *instance.LaunchTime,
 	      Tags: make(map[string]string),
+        StateTransitionReason: *instance.StateTransitionReason,
 	    }
-	    // fmt.Println("Instance: ", *instance.InstanceId)
-	    // fmt.Println("  State: ", instanceState.Name)
+	    fmt.Println("  State: ", string(instance.State.Name))
 	    for _, tag := range instance.Tags {
 	      if *tag.Key != "" {
 	        ec2.Tags[*tag.Key] = *tag.Value
 	      }
-	      // fmt.Println("  Tag ", *tag.Key," : ", *tag.Value)
 	    }
-
 	    ec2s = append(ec2s, ec2)
 	  }
 	}
